@@ -1,5 +1,5 @@
 ---
-title: "Computational Modeling - Week 3-4 - Assignment 2 - Part 1"
+title: "Computational Modeling - Week 3 - Assignment 2 - Part 1"
 author: "Riccardo Fusaroli"
 output: html_document
 ---
