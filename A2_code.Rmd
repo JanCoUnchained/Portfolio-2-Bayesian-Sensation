@@ -20,10 +20,25 @@ file.edit(M)
 rstan_options(auto_write = TRUE)
 ```
 
+
 # QUESTION 1
 
 ```{r}
+ric <- data.frame(ID = rep("Riccardo", 6),
+                      answer = c(0, 0, 0, 1, 1, 1))
 
+kri <- data.frame(ID = rep("Kristian", 4),
+                  answer = c(0, 0, 1, 1))
+
+jos <- data.frame(ID = rep("Josh", 198),
+                  answer = c(rep(1, 160), rep(0, 38)))
+
+mik <- data.frame(ID = rep("Mikkel", 132),
+                  answer = c(rep(1, 66), rep(0, 66)))
+
+q1_data <- full_join(ric, kri) %>%
+  full_join(jos) %>%
+  full_join(mik)
 ```
 
 
