@@ -1,0 +1,63 @@
+---
+title: "A2_code"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# packages
+library(pacman)
+p_load(tidyverse, ggunchained, rstan, rethinking)
+
+
+# STAN SETUP
+options(mc.cores = parallel::detectCores())
+
+M <- file.path(Sys.getenv("HOME"), ".R", ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
+file.edit(M)
+
+rstan_options(auto_write = TRUE)
+```
+
+# QUESTION 1
+
+```{r}
+
+```
+
+
+# QUESTION 2
+```{r}
+
+```
+
+
+# QUESTION 3
+```{r}
+
+```
+
+
+# QUESTION 4
+```{r}
+
+```
+
+
+# QUESTION 5
+```{r}
+
+```
+
+
+# QUESTION 6
+```{r}
+
+```
+
+
+# QUESTION 7 - bonus
+```{r}
+
+```
