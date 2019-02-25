@@ -1,0 +1,59 @@
+---
+title: "Assignment2_Part2_victor"
+author: "Victor Møller"
+date: "25 feb 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+# packages
+library(pacman)
+p_load(tidyverse, ggunchained, rstan, rethinking)
+
+# STAN SETUP
+rstan_options(auto_write = TRUE)
+
+```
+
+old & new data
+
+```{r cars}
+#old data
+y1_data <- read.csv("q1_data.csv") #reading year 1 data. 
+
+#new data
+ric2 <- data.frame(ID = rep("Riccardo", 10),
+                      answer = c(rep(1, 9), rep(0, 1)))
+
+kri2 <- data.frame(ID = rep("Kristian", 12),
+                  answer = c(rep(1, 8), rep(1, 4)))
+
+jos2 <- data.frame(ID = rep("Josh", 172),
+                  answer = c(rep(1, 148), rep(0, 24)))
+
+
+mik2 <- data.frame(ID = rep("Mikkel", 65),
+                  answer = c(rep(1, 34), rep(0, 31)))
+
+y2_data <- full_join(ric2, kri2) %>%
+  full_join(jos2) %>%
+  full_join(mik2)
+
+# Create and join data.frames (Do we need to join here? Could we not just make a joint data.frame from the start? :)
+
+rm("jos2", "mik2","kri2","ric2") # Cleans the environment
+
+```
+
+predicting?
+
+```{r pressure, echo=FALSE}
+
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
