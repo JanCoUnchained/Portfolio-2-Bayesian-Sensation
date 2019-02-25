@@ -92,10 +92,10 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 # comparing parameters to and posteriors
 ## fun
 ```{r}
-tidy_posterior_plot <- function(correct, n) {
+tidy_posterior_plot <- function(correct, n, sample_size = 1e4) {
   cog <- tibble(w = 9, 
                    n = 10,
-                   p_grid = seq(from = 0, to = 1, length.out = 1e4)) %>% 
+                   p_grid = seq(from = 0, to = 1, length.out = sample_size)) %>% 
     mutate(prior = dnorm(p_grid, mean=0.8, sd=0.2),
            likelihood = dbinom(w, n, p_grid)) %>% 
     mutate(posterior  = likelihood * prior) %>% 
