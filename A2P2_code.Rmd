@@ -1,0 +1,23 @@
+---
+title: "A2P2_code"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# packages
+library(pacman)
+p_load(tidyverse, ggunchained, rstan, rethinking)
+
+
+# STAN SETUP
+options(mc.cores = parallel::detectCores())
+
+M <- file.path(Sys.getenv("HOME"), ".R", ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
+file.edit(M)
+
+rstan_options(auto_write = TRUE)
+```
+
+
