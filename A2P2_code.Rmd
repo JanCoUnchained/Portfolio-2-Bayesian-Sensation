@@ -1,23 +1,90 @@
 ---
-title: "A2P2_code"
+title: "Assignment2_Part2_victor"
+author: "Victor Møller"
+date: "25 feb 2019"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 
 # packages
 library(pacman)
 p_load(tidyverse, ggunchained, rstan, rethinking)
 
-
 # STAN SETUP
+rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-M <- file.path(Sys.getenv("HOME"), ".R", ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
-file.edit(M)
-
-rstan_options(auto_write = TRUE)
 ```
 
+old & new data
 
+```{r cars}
+#old data
+y1_data <- read.csv("q1_data.csv") #reading year 1 data. 
+
+#new data
+ric2 <- data.frame(ID = rep("Riccardo", 10),
+                      answer = c(rep(1, 9), rep(0, 1)))
+
+kri2 <- data.frame(ID = rep("Kristian", 12),
+                  answer = c(rep(1, 8), rep(1, 4)))
+
+jos2 <- data.frame(ID = rep("Josh", 172),
+                  answer = c(rep(1, 148), rep(0, 24)))
+
+
+mik2 <- data.frame(ID = rep("Mikkel", 65),
+                  answer = c(rep(1, 34), rep(0, 31)))
+
+y2_data <- full_join(ric2, kri2) %>%
+  full_join(jos2) %>%
+  full_join(mik2)
+
+# Create and join data.frames (Do we need to join here? Could we not just make a joint data.frame from the start? :)
+
+rm("jos2", "mik2","kri2","ric2") # Cleans the environment
+
+```
+
+predicting?
+
+```{r pressure, echo=FALSE}
+posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, sum_posterior = T, dens_sample = T, data) {
+  likelihood = dbinom(x = sum(data$ID == cog & data$answer == 1), size = sum(data$ID == cog), prob = grid)
+  prior = prior
+  unstd.post = likelihood * prior
+  post = unstd.post / sum(unstd.post) # Normalizing
+  samples = sample(grid, prob = post, size = sample_size , replace = T)
+  # if (cog == "Mikkel") {
+  #   plot(grid, post, type = "b",
+  #      xlab = "Mikkel probably doesn't know more than chance", ylab = "posterior probability") # self-explanatory
+  # } else {
+  #   plot(grid, post, type = "b",
+  #      xlab = str_c("Probability that ", cog," knows more than chance level"), ylab = "posterior probability") }
+  if (give_sample == T) {
+    plot(samples, xlab = str_c(sample_size, " sized sample from ", cog, "'s posterior distribution")) }
+  if (dens_sample == T) {
+    dens(samples, xlab = str_c("density plot of ", sample_size, " samples from ", cog, "'s posterior distribution"), show.HPDI = .95)
+  }
+  if (sum_posterior == T) {
+    str_c(" The posterior probability that ", cog, " knows more than chance is ", sum(samples > 0.5) / sample_size)
+  }
+}
+
+
+cogs = c("Riccardo", "Mikkel", "Josh", "Kristian")
+app_prior <- dnorm(p_grid, mean=0.8, sd=0.2)
+p_grid = seq(from = 0, to = 1, length.out = 10000)
+
+lapply(cogs, posterior_gen, grid = p_grid, prior = app_prior, data = y2_data,
+       give_sample = F)
+
+plot(app_prior, xlab = "Prior", ylab = "Probability")
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
