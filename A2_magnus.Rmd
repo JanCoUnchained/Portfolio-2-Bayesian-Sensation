@@ -63,9 +63,10 @@ dens(samples)
 
 sum(samples > 0.5) / 1e4
 ```
+dunif(0,1)
 
 ```{r RF quadratic approximation}
-RF.qa = map(
+RF.qa = rethinking::map(
   alist(
     w ~ dbinom(6,p) ,
     p ~ dunif(0,1)
@@ -73,6 +74,9 @@ RF.qa = map(
   data = list(w=3))
 
 precis(RF.qa)
+
+post = extract.samples(RF.qa, n = 1e4)
+head(post)
 ```
 
 
@@ -85,7 +89,7 @@ precis(RF.qa)
 #* grid = the grid approximation used i.e. grid = seq(from #= 0, to = 1, length. out = 100) (useful for specifying #different        amount of generated points)
 #* prior = prior i.e. the uniform prior
 
-#It then generates a binomial likelihood by summing all #the correct answers of one teacher and weighing it #against the total number of answers given by that #teacher.
+#It then generates a binomial likelihood by summing all #the correct answers of one teacher and weighing it #against the total number of answers given by that teacher.
 #Finally it plots the posterior distribution.
 
 posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, sum_posterior = T, dens_sample = T, data) {
@@ -103,7 +107,7 @@ posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, s
   if (give_sample == T) {
     plot(samples, xlab = str_c(sample_size, " sized sample from ", cog, "'s posterior distribution")) }
   if (dens_sample == T) {
-    dens(samples, xlab = str_c("density plot of ", sample_size, " samples from ", cog, "'s posterior distribution"))
+    dens(samples, xlab = str_c("density plot of ", sample_size, " samples from ", cog, "'s posterior distribution"), show.HPDI = .95)
   }
   if (sum_posterior == T) {
     str_c(" The posterior probability that ", cog, " knows more than chance is ", sum(samples > 0.5) / sample_size)
