@@ -99,19 +99,25 @@ tidy_posterior_plot <- function(correct, n,
                 n = n,
                 pri_correct = pri_correct,
                 pri_n = pri_n,
-                p_grid = seq(from = 0, to = 1, length.out = sample_size)) %>% 
-    mutate(prior = dbinom(pri_correct, pri_n, p_grid),
+                p_grid = seq(from = 0, to = 1, length.out = sample_size)) %>%
+    # old model
+    mutate(old_prior = dnorm(p_grid, mean=0.8, sd=0.2),
+           old_likelihood = dbinom(pri_correct, pri_n, p_grid),
+           old_posterior = old_likelihood * old_prior,
+           old_posterior = old_posterior / sum(old_posterior)) %>%
+    # new model
+    mutate(prior = old_posterior,
            likelihood = dbinom(correct, n, p_grid)) %>% 
     mutate(posterior  = likelihood * prior) %>% 
     mutate(posterior  = posterior / sum(posterior))
   
   return(cog %>% 
-    select(-correct, -n, -pri_correct, -pri_n) %>% 
+    select(-correct, -n, -pri_correct, -pri_n, -old_likelihood, -old_posterior) %>% 
     gather(key, value, -p_grid) %>% 
-    mutate(key = factor(key, levels = c("prior", "likelihood", "posterior"))) %>%
+    mutate(key = factor(key, levels = 
+                          c("old_prior", "prior", "likelihood", "posterior"))) %>%
     ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
       geom_ribbon() +
-      scale_fill_manual(values = c("blue", "red", "purple")) +
       scale_y_continuous(NULL, breaks = NULL) +
       #theme_janco_bar() +
       theme(legend.position = "none") +
@@ -125,13 +131,13 @@ tidy_posterior_plot <- function(correct, n,
 tidy_posterior_plot(9, 10, 3, 6) +
   labs(title = "Riccardo")
 
-tidy_posterior_plot(34, 65) +
+tidy_posterior_plot(34, 65, 66, 132) +
   labs(title = "Mikkel")
 
-tidy_posterior_plot(148, 172) +
+tidy_posterior_plot(148, 172, 160, 198) +
   labs(title = "Josh")
 
-tidy_posterior_plot(8, 12) +
+tidy_posterior_plot(8, 12, 2, 4) +
   labs(title = "Kristian")
 
 ```
