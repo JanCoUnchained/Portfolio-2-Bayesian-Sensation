@@ -92,17 +92,21 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 # comparing parameters to and posteriors
 ## fun
 ```{r}
-tidy_posterior_plot <- function(correct, n, sample_size = 1e4) {
-  cog <- tibble(w = 9, 
-                   n = 10,
-                   p_grid = seq(from = 0, to = 1, length.out = sample_size)) %>% 
-    mutate(prior = dnorm(p_grid, mean=0.8, sd=0.2),
-           likelihood = dbinom(w, n, p_grid)) %>% 
+tidy_posterior_plot <- function(correct, n, 
+                                pri_correct, pri_n,
+                                sample_size = 1e4) {
+  cog <- tibble(correct = correct, 
+                n = n,
+                pri_correct = pri_correct,
+                pri_n = pri_n,
+                p_grid = seq(from = 0, to = 1, length.out = sample_size)) %>% 
+    mutate(prior = dbinom(pri_correct, pri_n, p_grid),
+           likelihood = dbinom(correct, n, p_grid)) %>% 
     mutate(posterior  = likelihood * prior) %>% 
     mutate(posterior  = posterior / sum(posterior))
   
   return(cog %>% 
-    select(-w, -n) %>% 
+    select(-correct, -n, -pri_correct, -pri_n) %>% 
     gather(key, value, -p_grid) %>% 
     mutate(key = factor(key, levels = c("prior", "likelihood", "posterior"))) %>%
     ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
@@ -118,7 +122,7 @@ tidy_posterior_plot <- function(correct, n, sample_size = 1e4) {
 
 ## running
 ```{r}
-tidy_posterior_plot(9, 10) +
+tidy_posterior_plot(9, 10, 3, 6) +
   labs(title = "Riccardo")
 
 tidy_posterior_plot(34, 65) +
