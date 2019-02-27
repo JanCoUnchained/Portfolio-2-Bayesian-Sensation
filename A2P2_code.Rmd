@@ -58,6 +58,7 @@ posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, s
   unstd.post = likelihood * prior
   post = unstd.post / sum(unstd.post) # Normalizing
   samples = sample(grid, prob = post, size = sample_size , replace = T)
+  return(post)
   # if (cog == "Mikkel") {
   #   plot(grid, post, type = "b",
   #      xlab = "Mikkel probably doesn't know more than chance", ylab = "posterior probability") # self-explanatory
@@ -79,7 +80,7 @@ cogs = c("Riccardo", "Mikkel", "Josh", "Kristian")
 app_prior <- dnorm(p_grid, mean=0.8, sd=0.2)
 p_grid = seq(from = 0, to = 1, length.out = 10000)
 
-lapply(cogs, posterior_gen, grid = p_grid, prior = app_prior, data = y2_data,
+old_posteriors = lapply(cogs, posterior_gen, grid = p_grid, prior = app_prior, data = y2_data,
        give_sample = F)
 
 plot(app_prior, xlab = "Prior", ylab = "Probability")
