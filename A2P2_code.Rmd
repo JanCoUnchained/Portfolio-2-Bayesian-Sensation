@@ -59,12 +59,7 @@ posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, s
   post = unstd.post / sum(unstd.post) # Normalizing
   samples = sample(grid, prob = post, size = sample_size , replace = T)
   return(post)
-  # if (cog == "Mikkel") {
-  #   plot(grid, post, type = "b",
-  #      xlab = "Mikkel probably doesn't know more than chance", ylab = "posterior probability") # self-explanatory
-  # } else {
-  #   plot(grid, post, type = "b",
-  #      xlab = str_c("Probability that ", cog," knows more than chance level"), ylab = "posterior probability") }
+
   if (give_sample == T) {
     plot(samples, xlab = str_c(sample_size, " sized sample from ", cog, "'s posterior distribution")) }
   if (dens_sample == T) {
@@ -80,15 +75,15 @@ cogs = c("Riccardo", "Mikkel", "Josh", "Kristian")
 app_prior <- dnorm(p_grid, mean=0.8, sd=0.2)
 p_grid = seq(from = 0, to = 1, length.out = 10000)
 
-old_posteriors = lapply(cogs, posterior_gen, grid = p_grid, prior = app_prior, data = y2_data,
-       give_sample = F)
+old_posteriors = lapply(cogs, posterior_gen, 
+                        grid = p_grid, prior = app_prior, data = y2_data,
+                        give_sample = F)
 
 plot(app_prior, xlab = "Prior", ylab = "Probability")
 
 
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+S
 
 # comparing parameters to and posteriors
 ## fun
@@ -130,16 +125,16 @@ tidy_posterior_plot <- function(correct, n,
 ## running
 ```{r}
 tidy_posterior_plot(9, 10, 3, 6) +
-  labs(title = "Riccardo", y = "density")
+  labs(title = "Riccardo", y = "probability mass (density for old_prior)")
 
 tidy_posterior_plot(34, 65, 66, 132) +
-  labs(title = "Mikkel", y = "density")
+  labs(title = "Mikkel", y = "probability mass (density for old_prior)")
 
 tidy_posterior_plot(148, 172, 160, 198) +
-  labs(title = "Josh", y = "density")
+  labs(title = "Josh", y = "probability mass (density for old_prior)")
 
 tidy_posterior_plot(8, 12, 2, 4) +
-  labs(title = "Kristian", y = "density")
+  labs(title = "Kristian", y = "probability mass (density for old_prior)")
 
 ```
 
@@ -180,7 +175,7 @@ two_posteriors <- function(correct, n,
       theme_janco_point() +
       labs(title = paste0(cog_name),
            subtitle = "comparing posterior distributions",
-           y = "density")
+           y = "probability mass")
     )
   }
 ```
