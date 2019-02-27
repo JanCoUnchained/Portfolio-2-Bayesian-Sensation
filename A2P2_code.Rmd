@@ -109,10 +109,11 @@ tidy_posterior_plot <- function(correct, n,
     mutate(posterior  = posterior / sum(posterior))
   
   return(cog %>% 
-    select(-correct, -n, -pri_correct, -pri_n, -old_likelihood, -old_posterior) %>% 
+    select(-correct, -n, -pri_correct, -pri_n, -old_likelihood, -old_posterior,
+           -old_prior) %>% 
     gather(key, value, -p_grid) %>% 
     mutate(key = factor(key, levels = 
-                          c("old_prior", "prior", "likelihood", "posterior"))) %>%
+                          c("prior", "likelihood", "posterior"))) %>%
     ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
       geom_ribbon() +
       #scale_y_continuous(NULL, breaks = NULL) +
@@ -126,16 +127,20 @@ tidy_posterior_plot <- function(correct, n,
 ## running
 ```{r}
 tidy_posterior_plot(9, 10, 3, 6) +
-  labs(title = "Riccardo", y = "probability mass (density for old_prior)")
+  labs(title = "Riccardo",  subtitle = "aproximation from new data", 
+       y = "probability mass")
 
 tidy_posterior_plot(34, 65, 66, 132) +
-  labs(title = "Mikkel", y = "probability mass (density for old_prior)")
+  labs(title = "Mikkel", subtitle = "aproximation from new data",
+       y = "probability mass")
 
 tidy_posterior_plot(148, 172, 160, 198) +
-  labs(title = "Josh", y = "probability mass (density for old_prior)")
+  labs(title = "Josh", subtitle = "aproximation from new data",
+       y = "probability mass")
 
 tidy_posterior_plot(8, 12, 2, 4) +
-  labs(title = "Kristian", y = "probability mass (density for old_prior)")
+  labs(title = "Kristian", subtitle = "aproximation from new data",
+       y = "probability mass")
 
 ```
 
