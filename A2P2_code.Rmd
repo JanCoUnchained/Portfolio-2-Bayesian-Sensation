@@ -182,7 +182,7 @@ two_posteriors <- function(correct, n,
       theme_janco_point() +
       coord_cartesian(xlim = 0:1) +
       labs(title = paste0(cog_name),
-           subtitle = "comparing posterior distributions",
+           subtitle = "comparing predictive posterior distributions",
            y = "density")
     )
   }
