@@ -58,12 +58,12 @@ posterior_gen = function(cog, grid, prior, sample_size = 1e4, give_sample = F, s
   unstd.post = likelihood * prior
   post = unstd.post / sum(unstd.post) # Normalizing
   samples = sample(grid, prob = post, size = sample_size , replace = T)
-  return(post)
+  return(samples)
 
   if (give_sample == T) {
     plot(samples, xlab = str_c(sample_size, " sized sample from ", cog, "'s posterior distribution")) }
   if (dens_sample == T) {
-    dens(samples, xlab = str_c("density plot of ", sample_size, " samples from ", cog, "'s posterior distribution"), show.HPDI = .95)
+    dens(samples, xlab = str_c("density plot of ", sample_size, " samples from ", cog, "'s posterior distribution"), show.HPDI = .93)
   }
   if (sum_posterior == T) {
     str_c(" The posterior probability that ", cog, " knows more than chance is ", sum(samples > 0.5) / sample_size)
@@ -76,12 +76,13 @@ app_prior <- dnorm(p_grid, mean=0.8, sd=0.2)
 p_grid = seq(from = 0, to = 1, length.out = 10000)
 
 old_posteriors = lapply(cogs, posterior_gen, 
-                        grid = p_grid, prior = app_prior, data = y2_data,
+                        grid = p_grid, prior = app_prior, data = y1_data,
                         give_sample = F)
 
 plot(app_prior, xlab = "Prior", ylab = "Probability")
 
-
+HPDI(unlist(old_posteriors[3]), prob = 0.93)
+HPDI(unlist(old_posteriors[4]), prob = 0.93)
 ```
 S
 
@@ -157,25 +158,32 @@ two_posteriors <- function(correct, n,
     mutate(old_prior = dnorm(p_grid, mean=0.8, sd=0.2),
            old_likelihood = dbinom(pri_correct, pri_n, p_grid),
            old_posterior = old_likelihood * old_prior,
-           old_posterior = old_posterior / sum(old_posterior)) %>%
+           old_posterior = old_posterior / sum(old_posterior),
+           old_samples = sample(p_grid, 
+                                prob = old_posterior, 
+                                size = sample_size , replace = T)) %>%
     
     # new model
     mutate(prior = old_posterior,
            likelihood = dbinom(correct, n, p_grid)) %>% 
     mutate(posterior  = likelihood * prior) %>% 
-    mutate(posterior  = posterior / sum(posterior)) 
+    mutate(posterior  = posterior / sum(posterior),
+           new_samples = sample(p_grid, 
+                                prob = posterior, 
+                                size = sample_size , replace = T)) 
   
   return(cog %>%
-    select(new_posterior = posterior, old_posterior, p_grid) %>%
+    select(old_PPD = old_samples, new_PPD = new_samples, p_grid) %>%
     gather(key, value, -p_grid) %>% 
     mutate(key = factor(key, levels = 
-                          c("old_posterior", "new_posterior"))) %>%
-    ggplot(aes(x = p_grid, ymin = 0, ymax = value, fill = key)) +
-      geom_ribbon(alpha = 0.5) +
+                          c("old_PPD", "new_PPD"))) %>%
+    ggplot(aes(x = value, fill = key)) +
+      geom_density(alpha = 0.5) +
       theme_janco_point() +
+      coord_cartesian(xlim = 0:1) +
       labs(title = paste0(cog_name),
            subtitle = "comparing posterior distributions",
-           y = "probability mass")
+           y = "density")
     )
   }
 ```
